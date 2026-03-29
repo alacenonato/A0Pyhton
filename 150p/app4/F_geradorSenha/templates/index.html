@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerador de Senhas Web 🔐</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Gerador de Senhas Web 🔐</h1>
+        <form method="POST">
+            <input type="number" name="tamanho" placeholder="Tamanho da senha" required>
+            <input type="number" name="quantidade" placeholder="Quantidade de senhas" required>
+            <label><input type="checkbox" name="numeros"> Incluir números</label>
+            <label><input type="checkbox" name="simbolos"> Incluir símbolos</label>
+            <button type="submit">Gerar Senhas</button>
+        </form>
+
+        <div class="resultado">
+            {% for s in senhas %}
+                <p>{{ s }}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // Copiar última senha
+        function copiarUltima() {
+            const senhas = document.querySelectorAll(".resultado p");
+            if (senhas.length > 0) {
+                const ultima = senhas[senhas.length - 1].innerText.split(': ')[1].split(' ')[0];
+                navigator.clipboard.writeText(ultima);
+                alert("Senha copiada: " + ultima);
+            }
+        }
+    </script>
+
+    <button onclick="copiarUltima()">Copiar última senha</button>
+</body>
+</html>

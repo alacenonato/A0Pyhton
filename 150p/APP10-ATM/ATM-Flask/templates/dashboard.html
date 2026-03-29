@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h2>💳 Caixa Eletrônico</h2>
+
+    <p><strong>Saldo:</strong> R$ {{ saldo }}</p>
+
+    <h3>Depositar</h3>
+    <form action="" method="post">
+        <input type="hidden" name="acao" value="depositar">
+        <input type="number" name="valor" id="" step="0.01" required>
+        <button type="submit">Depositar</button>
+    </form>
+
+        <h3>Sacar</h3>
+    <form action="" method="post">
+        <input type="hidden" name="acao" value="sacar">
+        <input type="number" name="valor" id="" step="0.01" required>
+        <button type="submit">Sacar</button>
+    </form>
+
+    <h3>📄 Extrato</h3>
+    <ul>
+        {% for item in extrato %}
+        <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+
+    <br>
+    <a href="/logout">Sair</a>
+</body>
+
+</html>

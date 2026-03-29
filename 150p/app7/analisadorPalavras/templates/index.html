@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analisador de Texto</title>
+</head>
+<body>
+
+<h1>📊 Analisador de Texto</h1>
+
+<form method="POST" enctype="multipart/form-data">
+    <textarea name="texto" rows="10" cols="60">{{ texto }}</textarea><br><br>
+
+    <input type="file" name="arquivo"><br><br>
+
+    <button type="submit">Analisar</button>
+</form>
+
+{% if erro %}
+    <p style="color:red;">Erro: {{ erro }}</p>
+{% endif %}
+
+{% if resultado %}
+    <h2>Resultado:</h2>
+
+    <p>Palavras: {{ resultado.palavras }}</p>
+    <p>Caracteres: {{ resultado.caracteres }}</p>
+    <p>Frases: {{ resultado.frases }}</p>
+
+    {% if resultado.mais_comum %}
+        <p>Mais frequente: {{ resultado.mais_comum[0][0] }} ({{ resultado.mais_comum[0][1] }}x)</p>
+    {% endif %}
+
+    <h3>Top palavras:</h3>
+    <ul>
+        {% for palavra, qtd in resultado.frequencia[:10] %}
+            <li>{{ palavra }}: {{ qtd }}</li>
+        {% endfor %}
+    </ul>
+
+    <form method="POST" action="/exportar">
+        <input type="hidden" name="texto" value="{{ texto }}">
+        <button type="submit">Exportar Relatório</button>
+    </form>
+{% endif %}
+
+</body>
+</html>
