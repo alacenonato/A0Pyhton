@@ -1,0 +1,4 @@
+Turma criada: source /home/alace/A0python/.venv/bin/activate
+Turma criada: Matematica
+Aluno adicionado: Alace
+Aluno editado: Alace
