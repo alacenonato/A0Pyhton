@@ -1,4 +1,5 @@
 livros
+.idea
 .venv
 .vscode
 scripts
