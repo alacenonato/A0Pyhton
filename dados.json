@@ -1,17 +1,5 @@
 {
-    "turmas": {
-        "source /home/alace/A0python/.venv/bin/activate": [],
-        "Matematica": [
-            {
-                "nome": "Alace",
-                "notas": [
-                    10.0,
-                    8.0,
-                    9.0
-                ],
-                "media": 9.0,
-                "status": "[green]Aprovado[/green]"
-            }
-        ]
-    }
+    "vitorias": 0,
+    "derrotas": 2,
+    "empates": 1
 }
