@@ -1,3 +1,10 @@
 {
-    "alace": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"
+    "admin": {
+        "senha": "$2b$12$G/njPAFrR1JTqleTyu1boum.G4CS0ZAOjW3Zgl72Y1OUvpel/YrDm",
+        "admin": true
+    },
+    "alace": {
+        "senha": "$2b$12$bBEqAlsYaU0XQtCCsn3ITOdObWNLzz4ZnwXd2pqzH/FRz8QhFuA3m",
+        "admin": false
+    }
 }
