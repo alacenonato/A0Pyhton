@@ -44,7 +44,7 @@ def cadastrar():
         print("Senhas não coincidem!")
         return
 
-    usuarios[usuarios] = hash_senha(senha)
+    usuarios[usuario] = hash_senha(senha)
     salvar_usuarios(usuarios)
 
     print("Usuário cadastrado com sucesso!")
@@ -71,7 +71,7 @@ def login():
     print("Acesso bloqueado!")
     return None
 
-def editar_senha()
+def editar_senha():
     usuarios = carregar_ususarios()
     
     print("\n==== ALTERAR SENHA ====")
@@ -83,8 +83,9 @@ def editar_senha()
     
     senha_atual = getpass.getpass("Senha atual: ")
 
-    if usuarios[usuario] != hash_senha(senha_atual)
+    if usuarios[usuario] != hash_senha(senha_atual):
         print("Senha incorreta! ")
+        return
 
     nova = getpass.getpass("Nova senha: ")
     confirmar = getpass.getpass("Confirmar nova senha: ")
@@ -97,3 +98,72 @@ def editar_senha()
     salvar_usuarios(usuarios)
 
     print("Senha alterada com sucesso!")
+
+def deletar_usuario():
+    usuarios = carregar_ususarios()
+
+    print("\n=== DELETAR USUARIO ===")
+    usuario = input("Usuário: ")
+
+    if usuario not in usuarios:
+        print("Usuário não encontrado!")
+        return
+    
+    confirmacao = input("Them certeza? (s/n): ").lower()
+
+    if confirmacao == "s":
+        del usuarios[usuario]
+        salvar_usuarios(usuarios)
+        print("Usuário deletado!")
+
+    else:
+        print("Cancelado.")
+
+def listar_usuario():
+    usuarios = carregar_ususarios()
+    print("\n=== LISTA DE USUARIOS ===")
+
+    if not usuarios:
+        print("Nenhum usuário cadastrado.")
+        return
+    
+    for user in usuarios.keys():
+        print(f" - {user}")
+
+# ==================
+# MENU
+# ==================
+def menu():
+    while True:
+        print("\n==== MENU ====")
+        print("1- Cadastrar")
+        print("2- Login")
+        print("3- Alterar senha")
+        print("4- Deletar usuário")
+        print("5- Listar usuários (admin)")
+        print("6- Sair")
+
+        opcao = input("Escolha: ")
+
+        if opcao == "1":
+            cadastrar()
+        elif opcao == "2":
+            login()
+        elif opcao == "3":
+            editar_senha()
+        elif opcao == "4":
+            deletar_usuario()
+        elif opcao == "5":
+            listar_usuario()
+        elif opcao == "6":
+            print("Saindo...")
+            break
+        else:
+            print("Opção inválida!")
+
+# ====================
+# EXECUÇÃO
+# ====================
+
+if __name__ == "__main__":
+    menu()
