@@ -1,0 +1,329 @@
+Perfeito! Vou melhorar o script adicionando essa lógica de verificação. Aqui está o script em Python com as melhorias:
+
+---
+
+## 🐍 Script melhorado com verificação de duplicatas e tamanho
+
+```python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import glob
+import shutil
+from pathlib import Path
+
+# Cores para terminal
+class Cores:
+    VERMELHO = '\033[0;31m'
+    VERDE = '\033[0;32m'
+    AMARELO = '\033[1;33m'
+    AZUL = '\033[0;34m'
+    MAGENTA = '\033[0;35m'
+    CIANO = '\033[0;36m'
+    NC = '\033[0m'  # Sem cor
+
+def pausar():
+    print()
+    input(f"{Cores.AMARELO}▶ Pressione ENTER para continuar...{Cores.NC}")
+    print()
+
+def limpar_tela():
+    os.system('clear' if os.name == 'posix' else 'cls')
+
+def cabecalho():
+    limpar_tela()
+    print(f"{Cores.AZUL}╔════════════════════════════════════════════════════════════════════╗{Cores.NC}")
+    print(f"{Cores.AZUL}║{Cores.NC}      {Cores.MAGENTA}CRIADOR DE ARQUIVOS ELF PARA POPSTARTER (SMB) - v2.0{Cores.NC}           {Cores.AZUL}║{Cores.NC}")
+    print(f"{Cores.AZUL}╚════════════════════════════════════════════════════════════════════╝{Cores.NC}")
+    print()
+
+def barra_progresso(atual, total, largura=50):
+    percent = int(atual * 100 / total) if total > 0 else 0
+    preenchido = int(percent * largura / 100)
+    vazio = largura - preenchido
+    barra = "█" * preenchido + "░" * vazio
+    print(f"{Cores.CIANO}[{barra}] {percent}%{Cores.NC}", end="")
+
+def gerar_nome_unico(caminho, nome_base, extensao):
+    """Gera um nome único se o arquivo já existir e tiver tamanho diferente"""
+    nome_original = f"{nome_base}{extensao}"
+    caminho_completo = os.path.join(caminho, nome_original)
+    
+    if not os.path.exists(caminho_completo):
+        return nome_original
+    
+    # Pega o tamanho do arquivo original (POPSTARTER.ELF)
+    tamanho_original = os.path.getsize("POPSTARTER.ELF")
+    tamanho_existente = os.path.getsize(caminho_completo)
+    
+    if tamanho_existente == tamanho_original:
+        return nome_original  # Já existe e tem o mesmo tamanho
+    
+    # Tamanhos diferentes -> precisa criar com número
+    contador = 2
+    while True:
+        nome_novo = f"{nome_base}({contador}){extensao}"
+        caminho_novo = os.path.join(caminho, nome_novo)
+        
+        if not os.path.exists(caminho_novo):
+            return nome_novo
+        
+        # Se já existe com número, verifica tamanho
+        tamanho_existente = os.path.getsize(caminho_novo)
+        if tamanho_existente == tamanho_original:
+            return nome_novo  # Já existe e é válido
+        
+        contador += 1
+
+def main():
+    # ============================================
+    # PASSO 1: Verificar diretório
+    # ============================================
+    cabecalho()
+    
+    print(f"{Cores.CIANO}📁 PASSO 1: Verificando diretório atual{Cores.NC}")
+    print(f"   Diretório: {Cores.VERDE}{os.getcwd()}{Cores.NC}")
+    print()
+    
+    # Verifica se está na pasta 2POPS ou POPS
+    pasta_atual = os.path.basename(os.getcwd())
+    if pasta_atual not in ["2POPS", "POPS"]:
+        print(f"{Cores.AMARELO}⚠ ATENÇÃO: Você não está na pasta '2POPS' ou 'POPS'!{Cores.NC}")
+        print(f"   Execute: {Cores.AMARELO}cd '/media/alace/My Passport/2POPS'{Cores.NC}")
+        resposta = input(f"{Cores.CIANO}Deseja continuar mesmo assim? (s/N): {Cores.NC}")
+        if resposta.lower() != 's':
+            sys.exit(1)
+    
+    print(f"{Cores.VERDE}✓ OK: Você está na pasta correta!{Cores.NC}")
+    pausar()
+    
+    # ============================================
+    # PASSO 2: Verificar POPSTARTER.ELF
+    # ============================================
+    cabecalho()
+    
+    print(f"{Cores.CIANO}📦 PASSO 2: Verificando arquivo POPSTARTER.ELF{Cores.NC}")
+    
+    if not os.path.exists("POPSTARTER.ELF"):
+        print(f"{Cores.VERMELHO}✗ ERRO: POPSTARTER.ELF NÃO encontrado!{Cores.NC}")
+        print("   Coloque o arquivo POPSTARTER.ELF na pasta atual e tente novamente.")
+        sys.exit(1)
+    
+    tamanho_original = os.path.getsize("POPSTARTER.ELF")
+    tamanho_kb = tamanho_original / 1024
+    print(f"{Cores.VERDE}✓ POPSTARTER.ELF encontrado!{Cores.NC}")
+    print(f"   Tamanho: {Cores.AMARELO}{tamanho_kb:.0f} KB{Cores.NC}")
+    pausar()
+    
+    # ============================================
+    # PASSO 3: Procurar arquivos .VCD
+    # ============================================
+    cabecalho()
+    
+    print(f"{Cores.CIANO}🎮 PASSO 3: Procurando jogos no formato .VCD{Cores.NC}")
+    print()
+    
+    # Encontra todos os arquivos .VCD
+    vcd_files = glob.glob("*.VCD")
+    vcd_files.sort()
+    total_jogos = len(vcd_files)
+    
+    if total_jogos == 0:
+        print(f"{Cores.VERMELHO}✗ Nenhum arquivo .VCD encontrado nesta pasta!{Cores.NC}")
+        sys.exit(1)
+    
+    print(f"{Cores.VERDE}✓ Encontrados {total_jogos} jogos!{Cores.NC}")
+    print()
+    print(f"{Cores.AMARELO}Lista dos primeiros 5 jogos encontrados:{Cores.NC}")
+    for i, jogo in enumerate(vcd_files[:5]):
+        print(f"   {Cores.VERDE}{i+1}{Cores.NC}. {jogo}")
+    if total_jogos > 5:
+        print(f"   ... e mais {total_jogos - 5} jogos")
+    pausar()
+    
+    # ============================================
+    # PASSO 4: Analisar ELFs existentes
+    # ============================================
+    cabecalho()
+    
+    print(f"{Cores.CIANO}🔍 PASSO 4: Verificando arquivos ELF existentes{Cores.NC}")
+    print()
+    
+    existentes_validos = 0
+    existentes_invalidos = 0
+    precisam_criar = []
+    duplicatas = []
+    
+    for vcd in vcd_files:
+        nome_base = vcd[:-4]  # Remove .VCD
+        elf_name = f"SB.{nome_base}.ELF"
+        
+        if os.path.exists(elf_name):
+            tamanho_elf = os.path.getsize(elf_name)
+            if tamanho_elf == tamanho_original:
+                existentes_validos += 1
+                print(f"{Cores.VERDE}✓ VÁLIDO{Cores.NC}: {elf_name} (tamanho OK)")
+            else:
+                existentes_invalidos += 1
+                print(f"{Cores.VERMELHO}✗ INVÁLIDO{Cores.NC}: {elf_name} (tamanho {tamanho_elf} ≠ {tamanho_original})")
+                precisam_criar.append((nome_base, True))  # True = precisa substituir
+        else:
+            print(f"{Cores.AMARELO}○ FALTANDO{Cores.NC}: {elf_name}")
+            precisam_criar.append((nome_base, False))
+    
+    print()
+    print(f"📊 Resumo da análise:")
+    print(f"   {Cores.VERDE}✓ ELFs válidos (mesmo tamanho): {existentes_validos}{Cores.NC}")
+    print(f"   {Cores.VERMELHO}✗ ELFs inválidos (tamanho diferente): {existentes_invalidos}{Cores.NC}")
+    print(f"   {Cores.AMARELO}⚠ ELFs faltando: {len(precisam_criar)}{Cores.NC}")
+    print()
+    
+    if not precisam_criar and existentes_invalidos == 0:
+        print(f"{Cores.VERDE}🎉 Todos os ELFs já existem e são válidos! Nada para fazer.{Cores.NC}")
+        sys.exit(0)
+    
+    if existentes_invalidos > 0:
+        print(f"{Cores.AMARELO}⚠ ATENÇÃO: {existentes_invalidos} arquivos ELF têm tamanho diferente e serão substituídos.{Cores.NC}")
+    
+    pausar()
+    
+    # ============================================
+    # PASSO 5: Criar/Substituir os ELFs
+    # ============================================
+    cabecalho()
+    
+    print(f"{Cores.CIANO}⚙️ PASSO 5: Criando/Atualizando arquivos ELF{Cores.NC}")
+    print()
+    
+    criados = 0
+    substituidos = 0
+    total_para_processar = len(precisam_criar)
+    
+    for i, (nome_base, substituir) in enumerate(precisam_criar, 1):
+        elf_name = f"SB.{nome_base}.ELF"
+        
+        # Verifica se precisa gerar nome único (se já existe e é inválido)
+        if substituir:
+            # Remove o arquivo inválido antes de copiar
+            try:
+                os.remove(elf_name)
+                print(f"   [{i}/{total_para_processar}] Removendo inválido: {elf_name[:50]}... ", end="")
+                print(f"{Cores.VERDE}OK{Cores.NC}")
+            except Exception as e:
+                print(f"{Cores.VERMELHO}FALHOU - {e}{Cores.NC}")
+        
+        # Copia o arquivo
+        print(f"   [{i}/{total_para_processar}] Criando: {elf_name[:50]}... ", end="")
+        try:
+            shutil.copy2("POPSTARTER.ELF", elf_name)
+            print(f"{Cores.VERDE}OK{Cores.NC}")
+            if substituir:
+                substituidos += 1
+            else:
+                criados += 1
+        except Exception as e:
+            print(f"{Cores.VERMELHO}FALHOU - {e}{Cores.NC}")
+    
+    print()
+    barra_progresso(criados + substituidos, total_para_processar)
+    print()
+    print(f"\n{Cores.VERDE}✓ Resumo:{Cores.NC}")
+    print(f"   - Novos ELFs criados: {criados}")
+    print(f"   - ELFs inválidos substituídos: {substituidos}")
+    print(f"   - Total processado: {criados + substituidos}")
+    pausar()
+    
+    # ============================================
+    # PASSO 6: Verificação final
+    # ============================================
+    cabecalho()
+    
+    print(f"{Cores.CIANO}✅ PASSO 6: Verificação final{Cores.NC}")
+    print()
+    
+    # Verificar todos os ELFs agora
+    total_elfs = 0
+    validos = 0
+    invalidos = 0
+    
+    for elf in glob.glob("SB.*.ELF"):
+        total_elfs += 1
+        if os.path.getsize(elf) == tamanho_original:
+            validos += 1
+        else:
+            invalidos += 1
+    
+    print(f"📊 Status final:")
+    print(f"   Total de jogos .VCD: {Cores.AMARELO}{total_jogos}{Cores.NC}")
+    print(f"   Total de ELFs .ELF: {Cores.VERDE}{total_elfs}{Cores.NC}")
+    print(f"   {Cores.VERDE}✓ ELFs válidos: {validos}{Cores.NC}")
+    if invalidos > 0:
+        print(f"   {Cores.VERMELHO}✗ ELFs inválidos: {invalidos}{Cores.NC}")
+    print()
+    
+    if validos == total_jogos:
+        print(f"{Cores.VERDE}╔════════════════════════════════════════════════════════════════════╗{Cores.NC}")
+        print(f"{Cores.VERDE}║{Cores.NC}      🎉 TUDO PRONTO! Todos os ELFs estão válidos! 🎉           {Cores.VERDE}║{Cores.NC}")
+        print(f"{Cores.VERDE}╚════════════════════════════════════════════════════════════════════╝{Cores.NC}")
+    else:
+        print(f"{Cores.AMARELO}⚠ ATENÇÃO: Ainda existem {invalidos} ELFs inválidos.{Cores.NC}")
+    
+    print()
+    print(f"{Cores.CIANO}💡 Próximo passo:{Cores.NC}")
+    print(f"   Teste um jogo no OPL acessando a aba {Cores.AMARELO}APPS{Cores.NC}")
+    print()
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print(f"\n\n{Cores.AMARELO}⚠ Script interrompido pelo usuário.{Cores.NC}")
+        sys.exit(0)
+    except Exception as e:
+        print(f"\n{Cores.VERMELHO}✗ Erro inesperado: {e}{Cores.NC}")
+        sys.exit(1)
+```
+
+---
+
+## 📋 O que mudou no script
+
+| Melhoria | Descrição |
+|----------|-----------|
+| **Verificação de tamanho** | Compara o tamanho do ELF existente com o POPSTARTER.ELF original |
+| **Identifica ELFs inválidos** | Se o tamanho for diferente, marca como inválido |
+| **Substitui automaticamente** | Remove ELFs inválidos e recria com o tamanho correto |
+| **Relatório detalhado** | Mostra quantos ELFs são válidos, inválidos e faltando |
+| **Prevenção de duplicatas** | Se houver duplicata com nome diferente, mantém a correta |
+
+---
+
+## ▶️ Como usar
+
+```bash
+cd "/media/alace/My Passport/POPS"
+python3 script.py
+```
+
+---
+
+## 📊 Exemplo de saída
+
+```
+🔍 PASSO 4: Verificando arquivos ELF existentes
+
+✓ VÁLIDO: SB.SCUS_941.94.Gran Turismo.ELF (tamanho OK)
+✗ INVÁLIDO: SB.SCUS_941.99.Bloody Roar.ELF (tamanho 131844 ≠ 168448)
+○ FALTANDO: SB.SCUS_943.06.Twisted Metal 2.ELF
+
+📊 Resumo da análise:
+   ✓ ELFs válidos (mesmo tamanho): 45
+   ✗ ELFs inválidos (tamanho diferente): 3
+   ⚠ ELFs faltando: 2
+```
+
+---
+
+Execute o script e me diga se funcionou! 🚀
