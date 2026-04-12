@@ -133,3 +133,5 @@ ls -la | grep -E "SLUS|SLES|SCUS|SLPS"
 Depois de renomear os arquivos `.VCD` com os códigos corretos, o OPL Manager vai conseguir encontrar as capas automaticamente .
 
 Quer testar com um jogo primeiro antes de renomear todos? Me passa o nome exato de um arquivo `.VCD` que está dando problema e eu te ajudo a renomear manualmente para testar.
+
+
