@@ -1,6 +1,17 @@
 import random
+import json
 
-nomes = []
+def salvar():
+    with open("nomes.json", "w") as f:
+        json.dump(nomes, f)
+
+def carregar():
+    global nomes 
+    try:
+        with open("nomes.json", "r") as f:
+            nomes = json.load(f)
+    except:
+        nomes = []
 
 def adicionar_nomes():
     print("Digite os nomes (vazio para parar):")
@@ -9,6 +20,7 @@ def adicionar_nomes():
         if nome == "":
             break
         nomes.append(nome)
+    salvar()
 
 def sortear():
     if not nomes:
@@ -18,7 +30,26 @@ def sortear():
     sorteado = random.choice(nomes)
     print(f"Sorteado: {sorteado}")
 
+def sortear_varios():
+    if not nomes:
+        print("Lista vazia.")
+    
+    qtd = int(input("Quantos nomes sortear?"))
+
+    if qtd > len(nomes):
+        print("Quantidade maior que lista")
+        return
+    
+    sorteados = random.sample(nomes, qtd)
+
+    print("Sorteados:")
+    for s in sorteados:
+        print("-", s )
+
+
+
 def menu():
+    carregar()
     while True:
         print("\n=== SORTEADOR ===")
         print("1. Adicionar nomes")
